@@ -19,7 +19,9 @@
       # cordinate = gets.chomp
       if player == 1
         cordinate = gets.chomp
-        make_move(cordinate: cordinate, player: @zmogus)
+        unless make_move(cordinate: cordinate, player: @zmogus)
+          player *= -1
+        end
       else
         # p get_pc_cordinate
         make_move(cordinate: get_pc_cordinate, player: @pc)
@@ -34,6 +36,9 @@
 
       elsif is_winner?(@game_matrix, @pc)
         p 'Deja, jus pralaimejote :('
+        cordinate = 'q'
+      elsif empty_spots(@game_matrix).size == 0
+        p 'Lygiosios'
         cordinate = 'q'
       end
       # p empty_spots(@game_matrix)
@@ -56,7 +61,11 @@
 
   def make_move(options = {})
     x, y = read_cord(options[:cordinate])
-    @game_matrix[x][y] = options[:player]
+    if @game_matrix[x][y] != ' '
+      return false;
+    else
+      @game_matrix[x][y] = options[:player]
+    end
   end
 
   def get_pc_cordinate
@@ -108,7 +117,7 @@
       return -10
     elsif is_winner?(matrix, @pc)
       # p 'ad'
-      return 10
+      return +10
     elsif spots.size == 0
       return 0
     end
@@ -119,7 +128,6 @@
       x, y = read_cord(spot)
       move_index = matrix[x][y]
       matrix[x][y] = player
-
       if player == @pc
         move_score = mini_max(matrix, @zmogus)
       elsif player == @zmogus
